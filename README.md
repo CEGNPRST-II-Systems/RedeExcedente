@@ -1,10 +1,11 @@
 # 🤝 RedeExcedente - Plataforma de Trocas Inter-ONGs
 
+https://github.com/user-attachments/assets/648a1585-1cb3-42cb-a860-70148bed3ebd
+
 **Projeto Integrador II - UNIVESP (Turma 007 - A2026S2N7)**
 
 > Projeto desenvolvido para o **Projeto Integrador II** do curso de Bacharelado em Tecnologia da Informação / Engenharia de Computação / Ciência de Dados da **UNIVESP (Universidade Virtual do Estado de São Paulo)**.
 
-https://github.com/user-attachments/assets/944e5e7b-1f92-4d3b-8d4f-02a8f3efe4fe
 ---
 
 ## Acessibilidade
