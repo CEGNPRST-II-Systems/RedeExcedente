@@ -1,6 +1,7 @@
 # 🤝 RedeExcedente - Plataforma de Trocas Inter-ONGs
-
 > Projeto desenvolvido para o **Projeto Integrador II** do curso de Bacharelado em Tecnologia da Informação / Engenharia de Computação / Ciência de Dados da **UNIVESP (Universidade Virtual do Estado de São Paulo)**.
+
+https://github.com/user-attachments/assets/944e5e7b-1f92-4d3b-8d4f-02a8f3efe4fe
 
 ---
 
