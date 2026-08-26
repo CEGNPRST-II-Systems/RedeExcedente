@@ -4,6 +4,7 @@ import App from './App';
 
 test('renders App component', async () => {
   global.fetch = () => Promise.resolve({
+    ok: true,
     json: () => Promise.resolve([]),
   } as Response);
   render(<App />);
