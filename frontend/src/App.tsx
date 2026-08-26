@@ -264,7 +264,7 @@ export default function NGOExchangePlatform() {
                 </div>
 
                 <a
-                  href={`https://wa.me/?text=Olá, vi o anúncio "${item.title}" no sistema de trocas.`}
+                  href={`https://api.whatsapp.com/send?phone=${item.contact.replace(/\D/g, '')}&text=Olá, vi o anúncio "${item.title}" no sistema de trocas.`}
                   target="_blank"
                   rel="noreferrer"
                   className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-medium rounded-lg transition-colors"
