@@ -9,6 +9,8 @@ https://github.com/user-attachments/assets/944e5e7b-1f92-4d3b-8d4f-02a8f3efe4fe
 
 ## Acessibilidade
 
+https://github.com/user-attachments/assets/e327d658-d231-4ce2-8d72-5cab5c1587c9
+
 **Acessar as aplicações:**
    - **Frontend:** [http://localhost:3000](http://localhost:3000)
    - **Backend (API):** [http://localhost:8000](http://localhost:8000)
