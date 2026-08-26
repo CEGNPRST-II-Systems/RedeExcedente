@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { 
   Package, 
   MapPin, 
@@ -8,6 +8,8 @@ import {
   Phone, 
   X
 } from 'lucide-react';
+
+const API_URL = 'http://localhost:8000';
 
 interface MaterialItem {
   id: string;
@@ -22,51 +24,20 @@ interface MaterialItem {
   description: string;
 }
 
-const INITIAL_ITEMS: MaterialItem[] = [
-  {
-    id: '1',
-    title: '15 Cadeiras Escolares Infantis',
-    ngoName: 'Instituto Futuro Brilhante',
-    ngoRegistration: 'ONG-84920',
-    category: 'Mobiliário',
-    zone: 'Zona Leste',
-    quantity: '15 un',
-    condition: 'Usado - Bom estado',
-    contact: '(11) 98888-1234',
-    description: 'Cadeiras anatômicas infantis, sem detalhes graves.',
-  },
-  {
-    id: '2',
-    title: '5 Computadores Desktop (Core i3)',
-    ngoName: 'Rede Solidária Tech',
-    ngoRegistration: 'ONG-33102',
-    category: 'Tecnologia',
-    zone: 'Centro',
-    quantity: '5 un',
-    condition: 'Usado - Bom estado',
-    contact: '(11) 97777-5678',
-    description: 'Formatados, prontos para uso em laboratório comunitário.',
-  },
-  {
-    id: '3',
-    title: '80kg de Feijão e Arroz (Validade: 6 meses)',
-    ngoName: 'Ação Comunitária Viver',
-    ngoRegistration: 'ONG-12093',
-    category: 'Alimentos',
-    zone: 'Zona Norte',
-    quantity: '80 kg',
-    condition: 'Novo',
-    contact: '(11) 96666-9999',
-    description: 'Excedente de arrecadação da última campanha.',
-  },
-];
 
 export default function NGOExchangePlatform() {
-  const [items, setItems] = useState<MaterialItem[]>(INITIAL_ITEMS);
+  const [items, setItems] = useState<MaterialItem[]>([]);
   const [selectedCategory, setSelectedCategory] = useState<string>('Todas');
   const [selectedZone, setSelectedZone] = useState<string>('Todas');
   const [searchQuery, setSearchQuery] = useState<string>('');
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
+
+  useEffect(() => {
+    fetch(`${API_URL}/materials`)
+      .then(res => res.json())
+      .then(data => setItems(data))
+      .catch(err => console.error('Failed to fetch materials:', err));
+  }, []);
 
   const [formState, setFormState] = useState({
     title: '',
@@ -95,27 +66,28 @@ export default function NGOExchangePlatform() {
     e.preventDefault();
     if (!formState.title || !formState.ngoName) return;
 
-    const newItem: MaterialItem = {
-      ...formState,
-      id: Date.now().toString(),
-      category: formState.category as MaterialItem['category'],
-      zone: formState.zone as MaterialItem['zone'],
-      condition: formState.condition as MaterialItem['condition'],
-    };
-
-    setItems([newItem, ...items]);
-    setIsModalOpen(false);
-    setFormState({
-      title: '',
-      ngoName: '',
-      ngoRegistration: '',
-      category: 'Alimentos',
-      zone: 'Centro',
-      quantity: '',
-      condition: 'Usado - Bom estado',
-      contact: '',
-      description: '',
-    });
+    fetch(`${API_URL}/materials`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(formState)
+    })
+    .then(res => res.json())
+    .then(newItem => {
+      setItems([newItem, ...items]);
+      setIsModalOpen(false);
+      setFormState({
+        title: '',
+        ngoName: '',
+        ngoRegistration: '',
+        category: 'Alimentos',
+        zone: 'Centro',
+        quantity: '',
+        condition: 'Usado - Bom estado',
+        contact: '',
+        description: '',
+      });
+    })
+    .catch(err => console.error('Failed to create material:', err));
   };
 
   return (
