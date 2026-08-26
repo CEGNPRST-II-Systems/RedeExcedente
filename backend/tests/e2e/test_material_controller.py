@@ -25,6 +25,7 @@ def override_get_db():
         "contact": "12345678",
         "description": "Descricao de teste",
     }
+    mock_db.query.return_value.filter.return_value.all.return_value = [mock_data]
     mock_db.query.return_value.all.return_value = [mock_data]
     yield mock_db
 
@@ -45,7 +46,7 @@ def test_get_materials():
             "ngoRegistration": "123",
             "category": "Teste",
             "zone": "Zona Norte",
-            "quantity": "1",
+            "quantity": 1,
             "condition": "Novo",
             "contact": "12345678",
             "description": "Descricao de teste",

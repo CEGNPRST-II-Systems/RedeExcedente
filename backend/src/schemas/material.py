@@ -1,5 +1,6 @@
 from pydantic import BaseModel, Field
 
+
 class MaterialBase(BaseModel):
     title: str = Field(..., min_length=1, max_length=100)
     ngoName: str = Field(..., min_length=1, max_length=100)

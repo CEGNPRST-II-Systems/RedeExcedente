@@ -9,10 +9,10 @@ router = APIRouter(prefix="/materials", tags=["materials"])
 
 @router.get("", response_model=list[Material])
 def get_materials(
-    query: str = None, 
-    category: str = None, 
-    zone: str = None, 
-    db: Session = Depends(get_db)
+    query: str = None,
+    category: str = None,
+    zone: str = None,
+    db: Session = Depends(get_db),
 ):
     service = MaterialService(db)
     return service.filter_materials(query, category, zone)
