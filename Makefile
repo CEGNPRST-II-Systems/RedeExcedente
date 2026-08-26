@@ -13,7 +13,7 @@ logs:
 	docker compose logs -f
 
 test-backend:
-	docker compose exec backend pytest
+	docker compose exec backend pytest /app/tests
 
 test-frontend:
 	docker compose exec frontend npm test

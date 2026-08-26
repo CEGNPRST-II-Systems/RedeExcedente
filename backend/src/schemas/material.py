@@ -1,5 +1,5 @@
 from pydantic import BaseModel
-from typing import Optional
+
 
 class MaterialBase(BaseModel):
     title: str
@@ -12,8 +12,10 @@ class MaterialBase(BaseModel):
     contact: str
     description: str
 
+
 class MaterialCreate(MaterialBase):
     pass
+
 
 class Material(MaterialBase):
     id: str

@@ -1,8 +1,8 @@
+from controllers.material_controller import router as material_router
+from database.init_db import init_db
+from database.session import Base, engine
 from exceptions.exception_handlers import register_exception_handlers
 from fastapi import FastAPI
-from database.session import engine, Base
-from database.init_db import init_db
-from controllers.material_controller import router as material_router
 from fastapi.middleware.cors import CORSMiddleware
 
 Base.metadata.create_all(bind=engine)

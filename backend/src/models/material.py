@@ -1,6 +1,8 @@
-from sqlalchemy import Column, String
-from database.session import Base
 import uuid
+
+from database.session import Base
+from sqlalchemy import Column, String
+
 
 class Material(Base):
     __tablename__ = "materials"
