@@ -26,3 +26,6 @@ lint:
 format:
 	ruff check --fix --config backend/pyproject.toml backend
 	ruff format --config backend/pyproject.toml backend
+
+pgadmin:
+	docker compose exec pgadmin /venv/bin/python3 /pgadmin4/setup.py load-servers /pgadmin4/servers.json --user admin@admin.com

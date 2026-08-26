@@ -1,7 +1,7 @@
 services:
   db:
     image: postgres:15-alpine
-    restart: always
+    restart: no
     container_name: rede_excedente-db
     environment:
       - POSTGRES_USER=${POSTGRES_USER}
@@ -28,7 +28,7 @@ services:
     depends_on:
       - db
     networks:
-        - rede_excedente
+      - rede_excedente
     working_dir: /app/src
     command: ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "8000", "--reload"]
 
@@ -47,8 +47,28 @@ services:
       - WATCHPACK_POLLING=true
       - CHOKIDAR_USEPOLLING=true
 
+  pgadmin:
+    image: dpage/pgadmin4:latest
+    container_name: rede_excedente-pgadmin
+    environment:
+      - PGADMIN_DEFAULT_EMAIL=admin@admin.com
+      - PGADMIN_DEFAULT_PASSWORD=admin
+      - PGADMIN_CONFIG_SERVER_MODE=True
+      - PGADMIN_CONFIG_MASTER_PASSWORD_REQUIRED=False
+      - PGADMIN_CONFIG_AUTO_LOGOUT_TIME=0
+      - PGADMIN_CONFIG_AUTHENTICATION_SOURCES=['internal']
+    ports:
+      - "5050:80"
+    volumes:
+      - pgadmin_data:/var/lib/pgadmin
+    networks:
+      - rede_excedente
+    depends_on:
+      - db
+
 volumes:
   postgres_data:
+  pgadmin_data:
 
 networks:
   rede_excedente:
