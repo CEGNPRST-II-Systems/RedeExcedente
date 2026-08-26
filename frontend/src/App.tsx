@@ -30,14 +30,29 @@ export default function NGOExchangePlatform() {
   const [selectedCategory, setSelectedCategory] = useState<string>('Todas');
   const [selectedZone, setSelectedZone] = useState<string>('Todas');
   const [searchQuery, setSearchQuery] = useState<string>('');
+  const [debouncedQuery, setDebouncedQuery] = useState<string>('');
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
 
   useEffect(() => {
-    fetch(`${API_URL}/materials`)
+    const handler = setTimeout(() => {
+      setDebouncedQuery(searchQuery);
+    }, 500);
+    return () => clearTimeout(handler);
+  }, [searchQuery]);
+
+  useEffect(() => {
+    const params = new URLSearchParams();
+    if (debouncedQuery) params.append('query', debouncedQuery);
+    if (selectedCategory !== 'Todas') params.append('category', selectedCategory);
+    if (selectedZone !== 'Todas') params.append('zone', selectedZone);
+
+    const url = `${API_URL}/materials?${params.toString()}`;
+      
+    fetch(url)
       .then(res => res.json())
       .then(data => setItems(data))
       .catch(err => console.error('Failed to fetch materials:', err));
-  }, []);
+  }, [debouncedQuery, selectedCategory, selectedZone]);
 
   const [formState, setFormState] = useState({
     title: '',
@@ -56,13 +71,7 @@ export default function NGOExchangePlatform() {
   const categories = ['Todas', 'Alimentos', 'Mobiliário', 'Tecnologia', 'Escolar', 'Roupas'];
   const zones = ['Todas', 'Zona Norte', 'Zona Sul', 'Zona Leste', 'Zona Oeste', 'Centro'];
 
-  const filteredItems = items.filter((item) => {
-    const matchCategory = selectedCategory === 'Todas' || item.category === selectedCategory;
-    const matchZone = selectedZone === 'Todas' || item.zone === selectedZone;
-    const matchSearch = item.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-                        item.ngoName.toLowerCase().includes(searchQuery.toLowerCase());
-    return matchCategory && matchZone && matchSearch;
-  });
+  const filteredItems = items;
 
   const handleFormSubmit = (e: React.FormEvent) => {
     e.preventDefault();
