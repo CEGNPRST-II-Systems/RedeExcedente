@@ -23,4 +23,4 @@ lint:
 
 format:
 	ruff check --fix --config backend/pyproject.toml backend
-	ruff format --config backend/pyproject.toml backend
+	ruff format --check --config backend/pyproject.toml backend
