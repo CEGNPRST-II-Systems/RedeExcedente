@@ -1,6 +1,7 @@
 [tool.ruff]
 line-length = 88
 target-version = "py312"
+exclude = ["tests"]
 
 [tool.ruff.lint]
 select = [
@@ -10,9 +11,7 @@ select = [
     "I",  # isort
 ]
 ignore = []
-exclude = ["tests"]
 
 [tool.ruff.format]
 quote-style = "double"
 indent-style = "space"
-exclude = ["tests"]
