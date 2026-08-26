@@ -18,7 +18,7 @@ interface MaterialItem {
   ngoRegistration: string;
   category: 'Alimentos' | 'Mobiliário' | 'Tecnologia' | 'Escolar' | 'Roupas';
   zone: 'Zona Norte' | 'Zona Sul' | 'Zona Leste' | 'Zona Oeste' | 'Centro';
-  quantity: string;
+  quantity: number;
   condition: 'Novo' | 'Usado - Bom estado' | 'Precisa de Reparo';
   contact: string;
   description: string;
@@ -45,7 +45,7 @@ export default function NGOExchangePlatform() {
     ngoRegistration: '',
     category: 'Alimentos',
     zone: 'Centro',
-    quantity: '',
+    quantity: 0,
     condition: 'Usado - Bom estado',
     contact: '',
     description: '',
@@ -249,6 +249,7 @@ export default function NGOExchangePlatform() {
                 <input
                   type="text"
                   required
+                  maxLength={100}
                   placeholder="Ex: 20 Pacotes de Folha Sulfite A4"
                   value={formState.title}
                   onChange={(e) => setFormState({ ...formState, title: e.target.value })}
@@ -262,6 +263,7 @@ export default function NGOExchangePlatform() {
                   <input
                     type="text"
                     required
+                    maxLength={100}
                     value={formState.ngoName}
                     onChange={(e) => setFormState({ ...formState, ngoName: e.target.value })}
                     className="w-full text-sm px-3 py-2 border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-500"
@@ -272,6 +274,7 @@ export default function NGOExchangePlatform() {
                   <input
                     type="text"
                     placeholder="ONG-00000"
+                    maxLength={20}
                     value={formState.ngoRegistration}
                     onChange={(e) => setFormState({ ...formState, ngoRegistration: e.target.value })}
                     className="w-full text-sm px-3 py-2 border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-500"
@@ -310,18 +313,20 @@ export default function NGOExchangePlatform() {
                 <div>
                   <label className="block text-xs font-semibold text-slate-700 mb-1">Quantidade</label>
                   <input
-                    type="text"
-                    placeholder="Ex: 5 caixas"
+                    type="number"
+                    min={1}
+                    placeholder="Ex: 5"
                     value={formState.quantity}
-                    onChange={(e) => setFormState({ ...formState, quantity: e.target.value })}
+                    onChange={(e) => setFormState({ ...formState, quantity: parseInt(e.target.value) || 0 })}
                     className="w-full text-sm px-3 py-2 border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-500"
                   />
                 </div>
                 <div>
                   <label className="block text-xs font-semibold text-slate-700 mb-1">Contato / Telefone</label>
                   <input
-                    type="text"
+                    type="tel"
                     placeholder="(11) 99999-9999"
+                    maxLength={20}
                     value={formState.contact}
                     onChange={(e) => setFormState({ ...formState, contact: e.target.value })}
                     className="w-full text-sm px-3 py-2 border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-500"
@@ -333,6 +338,7 @@ export default function NGOExchangePlatform() {
                 <label className="block text-xs font-semibold text-slate-700 mb-1">Descrição Breve</label>
                 <textarea
                   rows={3}
+                  maxLength={500}
                   value={formState.description}
                   onChange={(e) => setFormState({ ...formState, description: e.target.value })}
                   className="w-full text-sm px-3 py-2 border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-500"

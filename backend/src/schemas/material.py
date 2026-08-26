@@ -7,7 +7,7 @@ class MaterialBase(BaseModel):
     ngoRegistration: str
     category: str
     zone: str
-    quantity: str
+    quantity: int
     condition: str
     contact: str
     description: str

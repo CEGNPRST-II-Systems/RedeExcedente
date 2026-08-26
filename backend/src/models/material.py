@@ -1,8 +1,7 @@
 import uuid
 
 from database.session import Base
-from sqlalchemy import Column, String
-
+from sqlalchemy import Column, String, Integer
 
 class Material(Base):
     __tablename__ = "materials"
@@ -13,7 +12,7 @@ class Material(Base):
     ngoRegistration = Column(String, nullable=False)
     category = Column(String, nullable=False)
     zone = Column(String, nullable=False)
-    quantity = Column(String, nullable=False)
+    quantity = Column(Integer, nullable=False)
     condition = Column(String, nullable=False)
     contact = Column(String, nullable=False)
     description = Column(String, nullable=False)
