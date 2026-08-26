@@ -32,6 +32,10 @@ Muitas Organizações Não Governamentais (ONGs) recebem doações em excesso de
 - **Identificação Institucional:** Registro simplificado de ONGs para validação e transparência das trocas.
 - **Contato Direto:** Integração rápida via WhatsApp/telefone para agilizar a logística e a retirada dos insumos.
 
+
+https://github.com/user-attachments/assets/a6da7046-27de-4ed8-a86f-c3c566502d33
+
+
 ---
 
 ## 🛠️ Tecnologias Utilizadas
