@@ -22,6 +22,7 @@ register_exception_handlers(app)
 
 app.include_router(material_router)
 
+
 @app.get("/")
 def read_root():
     return {"RedeExcedente": "Started"}
