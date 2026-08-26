@@ -1,6 +1,6 @@
 import os
+import pytest
 from unittest.mock import MagicMock
-
 from fastapi.testclient import TestClient
 
 # Set DB to sqlite in-memory before importing app
