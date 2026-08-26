@@ -6,8 +6,7 @@ import {
   Search, 
   Building2, 
   Phone, 
-  CheckCircle2, 
-  X 
+  X
 } from 'lucide-react';
 
 interface MaterialItem {

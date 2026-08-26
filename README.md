@@ -1,8 +1,17 @@
 # 🤝 RedeExcedente - Plataforma de Trocas Inter-ONGs
 
+**Projeto Integrador II - UNIVESP (Turma 007 - A2026S2N7)**
+
 > Projeto desenvolvido para o **Projeto Integrador II** do curso de Bacharelado em Tecnologia da Informação / Engenharia de Computação / Ciência de Dados da **UNIVESP (Universidade Virtual do Estado de São Paulo)**.
 
 ---
+
+## Acessibilidade
+
+**Acessar as aplicações:**
+   - **Frontend:** [http://localhost:3000](http://localhost:3000)
+   - **Backend (API):** [http://localhost:8000](http://localhost:8000)
+   - **Documentação API (Swagger):** [http://localhost:8000/docs](http://localhost:8000/docs)
 
 ## 📌 Sobre o Projeto
 
