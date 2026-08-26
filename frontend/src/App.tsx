@@ -81,7 +81,7 @@ export default function NGOExchangePlatform() {
         ngoRegistration: '',
         category: 'Alimentos',
         zone: 'Centro',
-        quantity: '',
+        quantity: 0,
         condition: 'Usado - Bom estado',
         contact: '',
         description: '',
