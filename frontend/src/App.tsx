@@ -18,7 +18,7 @@ interface MaterialItem {
   ngoRegistration: string;
   category: 'Alimentos' | 'Mobiliário' | 'Tecnologia' | 'Escolar' | 'Roupas';
   zone: 'Zona Norte' | 'Zona Sul' | 'Zona Leste' | 'Zona Oeste' | 'Centro';
-  quantity: string;
+  quantity: number;
   condition: 'Novo' | 'Usado - Bom estado' | 'Precisa de Reparo';
   contact: string;
   description: string;
@@ -30,14 +30,29 @@ export default function NGOExchangePlatform() {
   const [selectedCategory, setSelectedCategory] = useState<string>('Todas');
   const [selectedZone, setSelectedZone] = useState<string>('Todas');
   const [searchQuery, setSearchQuery] = useState<string>('');
+  const [debouncedQuery, setDebouncedQuery] = useState<string>('');
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
 
   useEffect(() => {
-    fetch(`${API_URL}/materials`)
+    const handler = setTimeout(() => {
+      setDebouncedQuery(searchQuery);
+    }, 500);
+    return () => clearTimeout(handler);
+  }, [searchQuery]);
+
+  useEffect(() => {
+    const params = new URLSearchParams();
+    if (debouncedQuery) params.append('query', debouncedQuery);
+    if (selectedCategory !== 'Todas') params.append('category', selectedCategory);
+    if (selectedZone !== 'Todas') params.append('zone', selectedZone);
+
+    const url = `${API_URL}/materials?${params.toString()}`;
+      
+    fetch(url)
       .then(res => res.json())
       .then(data => setItems(data))
       .catch(err => console.error('Failed to fetch materials:', err));
-  }, []);
+  }, [debouncedQuery, selectedCategory, selectedZone]);
 
   const [formState, setFormState] = useState({
     title: '',
@@ -45,26 +60,59 @@ export default function NGOExchangePlatform() {
     ngoRegistration: '',
     category: 'Alimentos',
     zone: 'Centro',
-    quantity: '',
+    quantity: 0,
     condition: 'Usado - Bom estado',
     contact: '',
     description: '',
   });
 
+  const [errors, setErrors] = useState<Record<string, string>>({});
+
   const categories = ['Todas', 'Alimentos', 'Mobiliário', 'Tecnologia', 'Escolar', 'Roupas'];
   const zones = ['Todas', 'Zona Norte', 'Zona Sul', 'Zona Leste', 'Zona Oeste', 'Centro'];
 
-  const filteredItems = items.filter((item) => {
-    const matchCategory = selectedCategory === 'Todas' || item.category === selectedCategory;
-    const matchZone = selectedZone === 'Todas' || item.zone === selectedZone;
-    const matchSearch = item.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-                        item.ngoName.toLowerCase().includes(searchQuery.toLowerCase());
-    return matchCategory && matchZone && matchSearch;
-  });
+  const filteredItems = items;
 
   const handleFormSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    if (!formState.title || !formState.ngoName) return;
+    const newErrors: Record<string, string> = {};
+
+    if (!formState.title.trim()) {
+      newErrors.title = 'O título é obrigatório.';
+    } else if (formState.title.length > 100) {
+      newErrors.title = 'O título deve ter no máximo 100 caracteres.';
+    }
+
+    if (!formState.ngoName.trim()) {
+      newErrors.ngoName = 'O nome da ONG é obrigatório.';
+    } else if (formState.ngoName.length > 100) {
+      newErrors.ngoName = 'O nome da ONG deve ter no máximo 100 caracteres.';
+    }
+
+    if (!formState.contact.trim()) {
+      newErrors.contact = 'O contato é obrigatório.';
+    } else if (formState.contact.length > 20) {
+      newErrors.contact = 'O contato deve ter no máximo 20 caracteres.';
+    }
+
+    if (!formState.description.trim()) {
+      newErrors.description = 'A descrição é obrigatória.';
+    } else if (formState.description.length > 500) {
+      newErrors.description = 'A descrição deve ter no máximo 500 caracteres.';
+    }
+
+    if (formState.quantity <= 0) {
+      newErrors.quantity = 'A quantidade deve ser maior que 0.';
+    }
+    
+    if (!formState.ngoRegistration.trim()) {
+      newErrors.ngoRegistration = 'O registro da ONG é obrigatório.';
+    }
+
+    if (Object.keys(newErrors).length > 0) {
+      setErrors(newErrors);
+      return;
+    }
 
     fetch(`${API_URL}/materials`, {
       method: 'POST',
@@ -81,11 +129,12 @@ export default function NGOExchangePlatform() {
         ngoRegistration: '',
         category: 'Alimentos',
         zone: 'Centro',
-        quantity: '',
+        quantity: 0,
         condition: 'Usado - Bom estado',
         contact: '',
         description: '',
       });
+      setErrors({});
     })
     .catch(err => console.error('Failed to create material:', err));
   };
@@ -245,43 +294,56 @@ export default function NGOExchangePlatform() {
 
             <form onSubmit={handleFormSubmit} className="space-y-4">
               <div>
-                <label className="block text-xs font-semibold text-slate-700 mb-1">Título do Material</label>
+                <label className="block text-xs font-semibold text-slate-700 mb-1">Título do Material <span className="text-red-500">*</span></label>
                 <input
                   type="text"
-                  required
+                  maxLength={100}
                   placeholder="Ex: 20 Pacotes de Folha Sulfite A4"
                   value={formState.title}
-                  onChange={(e) => setFormState({ ...formState, title: e.target.value })}
-                  className="w-full text-sm px-3 py-2 border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-500"
+                  onChange={(e) => {
+                    setFormState({ ...formState, title: e.target.value });
+                    if (errors.title) setErrors({ ...errors, title: '' });
+                  }}
+                  className={`w-full text-sm px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-500 ${errors.title ? 'border-red-500' : 'border-slate-200'}`}
                 />
+                {errors.title && <p className="text-red-500 text-[10px] mt-1">{errors.title}</p>}
               </div>
 
               <div className="grid grid-cols-2 gap-3">
                 <div>
-                  <label className="block text-xs font-semibold text-slate-700 mb-1">Nome da ONG</label>
+                  <label className="block text-xs font-semibold text-slate-700 mb-1">Nome da ONG <span className="text-red-500">*</span></label>
                   <input
                     type="text"
-                    required
+                    maxLength={100}
                     value={formState.ngoName}
-                    onChange={(e) => setFormState({ ...formState, ngoName: e.target.value })}
-                    className="w-full text-sm px-3 py-2 border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-500"
+                    onChange={(e) => {
+                      setFormState({ ...formState, ngoName: e.target.value });
+                      if (errors.ngoName) setErrors({ ...errors, ngoName: '' });
+                    }}
+                    className={`w-full text-sm px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-500 ${errors.ngoName ? 'border-red-500' : 'border-slate-200'}`}
                   />
+                  {errors.ngoName && <p className="text-red-500 text-[10px] mt-1">{errors.ngoName}</p>}
                 </div>
                 <div>
-                  <label className="block text-xs font-semibold text-slate-700 mb-1">Nº Registro / CNPJ</label>
+                  <label className="block text-xs font-semibold text-slate-700 mb-1">Nº Registro / CNPJ <span className="text-red-500">*</span></label>
                   <input
                     type="text"
                     placeholder="ONG-00000"
+                    maxLength={20}
                     value={formState.ngoRegistration}
-                    onChange={(e) => setFormState({ ...formState, ngoRegistration: e.target.value })}
-                    className="w-full text-sm px-3 py-2 border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-500"
+                    onChange={(e) => {
+                      setFormState({ ...formState, ngoRegistration: e.target.value });
+                      if (errors.ngoRegistration) setErrors({ ...errors, ngoRegistration: '' });
+                    }}
+                    className={`w-full text-sm px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-500 ${errors.ngoRegistration ? 'border-red-500' : 'border-slate-200'}`}
                   />
+                  {errors.ngoRegistration && <p className="text-red-500 text-[10px] mt-1">{errors.ngoRegistration}</p>}
                 </div>
               </div>
 
               <div className="grid grid-cols-2 gap-3">
                 <div>
-                  <label className="block text-xs font-semibold text-slate-700 mb-1">Categoria</label>
+                  <label className="block text-xs font-semibold text-slate-700 mb-1">Categoria <span className="text-red-500">*</span></label>
                   <select
                     value={formState.category}
                     onChange={(e) => setFormState({ ...formState, category: e.target.value })}
@@ -293,7 +355,7 @@ export default function NGOExchangePlatform() {
                   </select>
                 </div>
                 <div>
-                  <label className="block text-xs font-semibold text-slate-700 mb-1">Zona de Trabalho</label>
+                  <label className="block text-xs font-semibold text-slate-700 mb-1">Zona de Trabalho <span className="text-red-500">*</span></label>
                   <select
                     value={formState.zone}
                     onChange={(e) => setFormState({ ...formState, zone: e.target.value })}
@@ -308,35 +370,49 @@ export default function NGOExchangePlatform() {
 
               <div className="grid grid-cols-2 gap-3">
                 <div>
-                  <label className="block text-xs font-semibold text-slate-700 mb-1">Quantidade</label>
+                  <label className="block text-xs font-semibold text-slate-700 mb-1">Quantidade <span className="text-red-500">*</span></label>
                   <input
-                    type="text"
-                    placeholder="Ex: 5 caixas"
+                    type="number"
+                    placeholder="Ex: 5"
                     value={formState.quantity}
-                    onChange={(e) => setFormState({ ...formState, quantity: e.target.value })}
-                    className="w-full text-sm px-3 py-2 border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-500"
+                    onChange={(e) => {
+                      setFormState({ ...formState, quantity: parseInt(e.target.value) || 0 });
+                      if (errors.quantity) setErrors({ ...errors, quantity: '' });
+                    }}
+                    className={`w-full text-sm px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-500 ${errors.quantity ? 'border-red-500' : 'border-slate-200'}`}
                   />
+                  {errors.quantity && <p className="text-red-500 text-[10px] mt-1">{errors.quantity}</p>}
                 </div>
                 <div>
-                  <label className="block text-xs font-semibold text-slate-700 mb-1">Contato / Telefone</label>
+                  <label className="block text-xs font-semibold text-slate-700 mb-1">Contato / Telefone <span className="text-red-500">*</span></label>
                   <input
-                    type="text"
+                    type="tel"
                     placeholder="(11) 99999-9999"
+                    maxLength={20}
                     value={formState.contact}
-                    onChange={(e) => setFormState({ ...formState, contact: e.target.value })}
-                    className="w-full text-sm px-3 py-2 border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-500"
+                    onChange={(e) => {
+                      setFormState({ ...formState, contact: e.target.value });
+                      if (errors.contact) setErrors({ ...errors, contact: '' });
+                    }}
+                    className={`w-full text-sm px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-500 ${errors.contact ? 'border-red-500' : 'border-slate-200'}`}
                   />
+                  {errors.contact && <p className="text-red-500 text-[10px] mt-1">{errors.contact}</p>}
                 </div>
               </div>
 
               <div>
-                <label className="block text-xs font-semibold text-slate-700 mb-1">Descrição Breve</label>
+                <label className="block text-xs font-semibold text-slate-700 mb-1">Descrição Breve <span className="text-red-500">*</span></label>
                 <textarea
                   rows={3}
+                  maxLength={500}
                   value={formState.description}
-                  onChange={(e) => setFormState({ ...formState, description: e.target.value })}
-                  className="w-full text-sm px-3 py-2 border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-500"
+                  onChange={(e) => {
+                    setFormState({ ...formState, description: e.target.value });
+                    if (errors.description) setErrors({ ...errors, description: '' });
+                  }}
+                  className={`w-full text-sm px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-500 ${errors.description ? 'border-red-500' : 'border-slate-200'}`}
                 />
+                {errors.description && <p className="text-red-500 text-[10px] mt-1">{errors.description}</p>}
               </div>
 
               <div className="flex justify-end gap-2 pt-2">

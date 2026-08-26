@@ -8,8 +8,8 @@ def test_get_all_materials():
     mock_db = MagicMock()
     service = MaterialService(mock_db)
 
-    # Mocking the repository's get_all method
-    service.repository.get_all = MagicMock(
+    # Mocking the repository's filter_materials method
+    service.repository.filter_materials = MagicMock(
         return_value=[{"id": 1, "name": "Material 1"}]
     )
 
@@ -18,4 +18,4 @@ def test_get_all_materials():
 
     # Verification
     assert result == [{"id": 1, "name": "Material 1"}]
-    service.repository.get_all.assert_called_once()
+    service.repository.filter_materials.assert_called_once()
