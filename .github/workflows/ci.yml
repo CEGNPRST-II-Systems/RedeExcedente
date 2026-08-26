@@ -64,3 +64,19 @@ jobs:
         run: |
           cd backend
           PYTHONPATH=src pytest tests/e2e
+
+  frontend-tests:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+
+      - name: Run Frontend Tests
+        run: |
+          cd frontend
+          npm install
+          npm test
